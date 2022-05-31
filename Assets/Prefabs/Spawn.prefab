@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6827578970002844802}
   m_Layer: 0
   m_Name: Spawn
-  m_TagString: Untagged
+  m_TagString: Spawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,9 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47d08e44d94513648a97d31099729a7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcs:
+  _npcs:
   - {fileID: 3181614817037229790, guid: 341ec34f046653849b3a02e107d60a68, type: 3}
   - {fileID: 3181614817037229790, guid: 341ec34f046653849b3a02e107d60a68, type: 3}
   - {fileID: 8138515128231889393, guid: 7ee6cbafd98426844994b3a1f0f6794d, type: 3}
   - {fileID: 8138515128231889393, guid: 7ee6cbafd98426844994b3a1f0f6794d, type: 3}
-  timeSpawn: 1
+  _timeSpawn: 1

@@ -142,10 +142,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeEnemy: 1
-  _maxHealth: 100
-  _curHealth: 100
-  _moveSpeed: 3.5
-  _damage: 4
+  _maxHealth: 20
+  _curHealth: 20
+  _moveSpeed: 3
+  _damage: 5
   _target: {fileID: 0}
   _damagePoint: {fileID: 8138515128155726463}
   _unitsMask:

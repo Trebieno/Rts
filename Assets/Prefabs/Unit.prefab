@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 4480312700496854621}
   - component: {fileID: 4480312700496854620}
   m_Layer: 0
-  m_Name: Convas
+  m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -357,7 +357,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectedSprite: {fileID: 4480312700293045789}
-  _camera: {fileID: 0}
   _agent: {fileID: 466743708}
   _isSelected: 0
   _isMoving: 0
@@ -378,16 +377,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0c87937a4203b448c31c4e669dc067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 256
   _firePoint: {fileID: 169663890745886797}
   _targetEnemy: {fileID: 0}
-  _bulletPrefab: {fileID: 8183445935251439300, guid: e77bde6e817312c4e908fdbc0aad826b, type: 3}
   _bulletForce: 35
-  _timeDestroy: 2
   _delya: 0.3
+  _reload: 1.5
   _damage: 30
   _radius: 11.31
   _otherObjects: []
   _nearestObjects: []
+  _curBullets: 30
+  _maxBullets: 30
 --- !u!65 &466743702
 BoxCollider:
   m_ObjectHideFlags: 0

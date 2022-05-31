@@ -140,13 +140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a0972e33c2b17545b61f368b0b18d7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  curHealth: 100
-  _moveSpeed: 3.5
-  _damage: 4
+  typeEnemy: 0
+  _maxHealth: 20
+  _curHealth: 20
+  _moveSpeed: 3
+  _damage: 5
   _target: {fileID: 0}
   _damagePoint: {fileID: 3181614816809433488}
-  _units: []
   _unitsMask:
     serializedVersion: 2
     m_Bits: 64

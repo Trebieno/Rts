@@ -19,7 +19,8 @@ public class Shooting : MonoBehaviour
     [SerializeField] private int _curBullets = 30; 
     [SerializeField] private int _maxBullets = 30; 
 
-    private bool _isfire;
+    private bool _isFire;
+    private bool _isReload;
 
     private void Start()
     {
@@ -31,16 +32,16 @@ public class Shooting : MonoBehaviour
         if(ConnectingToDataBase(gameObject).Count > 0)
         {
             _targetEnemy = ConnectingToDataBase(gameObject)[0].transform;
-            transform.LookAt(new Vector3(_targetEnemy.position.x, 0.0f, _targetEnemy.position.z));
+            transform.LookAt(new Vector3(_targetEnemy.position.x, 0.5f, _targetEnemy.position.z));
         }            
 
         if (_targetEnemy != null)
-            _isfire = true;
+            _isFire = true;
 
         if (_targetEnemy == null)
-            _isfire = false;
+            _isFire = false;
 
-        if (_isfire && i >= 1)
+        if (_isFire && i >= 1)
         {
             Shoot();
             i = 0;
@@ -62,8 +63,10 @@ public class Shooting : MonoBehaviour
                 _curBullets--;
             }
         }
-        else
-            Reload();
+        else if (_curBullets <= 0 && !_isReload)
+        {
+            StartCoroutine(Reload());
+        }            
     }
 
     private int i = 0;
@@ -76,8 +79,10 @@ public class Shooting : MonoBehaviour
 
     private IEnumerator Reload()
     {
+        _isReload = true;
         yield return new WaitForSeconds(_reload);
         _curBullets = _maxBullets;
+        _isReload = false;
     }
 
     private void OnDrawGizmos() 

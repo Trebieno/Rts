@@ -4,19 +4,45 @@ using UnityEngine;
 
 public class SpawnEnemy : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> npcs;
-    [SerializeField] private float timeSpawn = 1f;
+    [SerializeField] private List<GameObject> _npcs;
+    [SerializeField] private float _timeSpawn = 1f;    
+    private WaveSystem _waveSystem;
+    private GameObject _enemy;    
 
-    void Start()
+    public IEnumerator Spawning()
     {
-        StartCoroutine(Spawning());
+        if(_waveSystem.EnemyCountInfo() > 0 && _waveSystem.WaveWorkingInfo())
+        {
+            RandomEnemy();
+            yield return new WaitForSeconds(_timeSpawn);
+            _waveSystem.SubtractionEnemyCount();
+            Instantiate(_enemy, transform.position, transform.rotation);
+            if(_waveSystem.EnemyCountInfo() - 1 >= 0)
+                StartCoroutine(Spawning());
+        }
     }
 
-    private IEnumerator Spawning()
+    private void RandomEnemy()
     {
-        GameObject enemy = Instantiate(npcs[Random.Range(0, npcs.Count - 1)], transform.position, transform.rotation);
-        yield return new WaitForSeconds(timeSpawn);
+        _enemy = _npcs[Random.Range(0, _npcs.Count)];
+        // int rnd = Random.Range(0, 100);
+        // if (rnd <= 30)
+        //     _enemy = npcs[1];
+        // else if (rnd >= 70)
+        //     _enemy = npcs[0];
+    }
 
-        StartCoroutine(Spawning());
+    public void SetWaveSystem(WaveSystem waveSystem)
+    {
+        _waveSystem = waveSystem;
+    }
+
+    public void NpcLvlUp()
+    {
+        _timeSpawn -= 0.04f;
+        for (int i = 0; i < _npcs.Count; i++)
+        {
+            _npcs[i].GetComponent<Enemy>().LvlUp();
+        }
     }
 }

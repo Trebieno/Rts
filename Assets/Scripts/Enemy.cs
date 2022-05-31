@@ -110,4 +110,12 @@ public class Enemy : MonoBehaviour, IHealth
     {
         _agent.SetDestination(_target.position);
     }
+
+    public void LvlUp()
+    {
+        _maxHealth += (_maxHealth * 10) / 100;
+        _damage += (_damage * 10) / 100;
+        _moveSpeed += (_damage * 5) / 100;
+        _curHealth = _maxHealth;
+    }
 }
