@@ -41,9 +41,11 @@ public class UnitSelection : MonoBehaviour
             {
                 SetDrag(false);
             }
-            else
-            {
-                RaycastHit hit;
+        }
+
+        if(Input.GetMouseButtonUp(1))
+        {
+            RaycastHit hit;
                 if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _clickableMask))
                 {
                     var unit = hit.collider.GetComponent<Unit>();
@@ -77,7 +79,6 @@ public class UnitSelection : MonoBehaviour
                     var unit = hit.collider.GetComponent<Unit>();
                     unit.Attack();
                 }
-            }
         }
         
         if (drag)

@@ -5,53 +5,53 @@ using UnityEngine.EventSystems;
 
 public class BuildButton : MonoBehaviour, IPointerDownHandler
 {
-    [SerializeField] GameObject hologram;
-    [SerializeField] GameObject building;
-    [SerializeField] LayerMask ground;
-    [SerializeField] float dist = 10f;
+    [SerializeField] private GameObject _hologram;
+    [SerializeField] private GameObject _building;
+    [SerializeField] private LayerMask _ground;
+    [SerializeField] private float _dist = 10f;
 
-    bool isPlanning;
-    Camera cam;
-    GameObject newHologram;
-    Ray mousePosToRay;
+    private bool _isPlanning;
+    private Camera _cam;
+    private GameObject _newHologram;
+    private Ray _mousePosToRay;
 
     private void Awake()
     {
-        cam = Camera.main;
-        newHologram = null;
+        _cam = Camera.main;
+        _newHologram = null;
     }
 
     private void Update()
     {
-        mousePosToRay = cam.ScreenPointToRay(Input.mousePosition);
+        _mousePosToRay = _cam.ScreenPointToRay(Input.mousePosition);
 
-        if (isPlanning && Input.GetMouseButtonDown(0) && newHologram == null)
+        if (_isPlanning && Input.GetMouseButtonDown(0) && _newHologram == null)
         {
-            newHologram = Instantiate(hologram, Vector3.zero, Quaternion.identity);
+            _newHologram = Instantiate(_hologram, Vector3.zero, Quaternion.identity);
         }
 
-        if (newHologram != null)
+        if (_newHologram != null)
         {
-            if (isPlanning)
+            if (_isPlanning)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(mousePosToRay, out hit, Mathf.Infinity, ground))
+                if (Physics.Raycast(_mousePosToRay, out hit, Mathf.Infinity, _ground))
                 {
-                    newHologram.transform.position = hit.point;
+                    _newHologram.transform.position = hit.point;
                 }
                 else
                 {
-                    newHologram.transform.position = mousePosToRay.origin + (mousePosToRay.direction * dist);
+                    _newHologram.transform.position = _mousePosToRay.origin + (_mousePosToRay.direction * _dist);
                 }
             }
 
             if (Input.GetMouseButtonUp(0) &&
-                newHologram != null)
+                _newHologram != null)
             {
-                isPlanning = false;
-                Vector3 pos = newHologram.transform.position;
-                Destroy(newHologram);
-                Instantiate(building, pos, Quaternion.identity);
+                _isPlanning = false;
+                Vector3 pos = _newHologram.transform.position;
+                Destroy(_newHologram);
+                Instantiate(_building, pos, Quaternion.identity);
                 UnitSelection.canDrag = true;
             }
         }
@@ -61,6 +61,6 @@ public class BuildButton : MonoBehaviour, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         UnitSelection.canDrag = false;
-        isPlanning = true;
+        _isPlanning = true;
     }
 }

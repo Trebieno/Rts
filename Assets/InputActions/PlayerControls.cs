@@ -37,28 +37,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""RotateToggle"",
-                    ""type"": ""Button"",
-                    ""id"": ""cdcaf264-15e2-484e-bdc7-2560f7f80522"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Rotate"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""502b387c-e96f-4198-ad68-6fc7c0907dd0"",
-                    ""expectedControlType"": ""Axis"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Zoom"",
                     ""type"": ""PassThrough"",
                     ""id"": ""eddf3005-d812-458e-989b-ccfd1713a385"",
                     ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""aaae066e-3b8a-4543-bde8-05d1addd58be"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RotateToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""4a45ad74-7ab3-4639-aac9-c4f0e8b0235a"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -122,34 +122,34 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""56b34ef1-1388-430a-9666-4d09850844f5"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""RotateToggle"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""807a878d-6d63-4fe7-9ea2-63e0db165a97"",
-                    ""path"": ""<Mouse>/delta/x"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Rotate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""4acfb7ca-d043-4853-9929-14eeec69e34b"",
                     ""path"": ""<Mouse>/scroll/y"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",
                     ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c485b93e-6d37-4f8a-b282-e3dbb8916633"",
+                    ""path"": ""<Mouse>/delta/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a41216cb-b9a9-4739-8f46-94460eb3c04b"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -178,9 +178,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         // Cam
         m_Cam = asset.FindActionMap("Cam", throwIfNotFound: true);
         m_Cam_Move = m_Cam.FindAction("Move", throwIfNotFound: true);
-        m_Cam_RotateToggle = m_Cam.FindAction("RotateToggle", throwIfNotFound: true);
-        m_Cam_Rotate = m_Cam.FindAction("Rotate", throwIfNotFound: true);
         m_Cam_Zoom = m_Cam.FindAction("Zoom", throwIfNotFound: true);
+        m_Cam_Rotation = m_Cam.FindAction("Rotation", throwIfNotFound: true);
+        m_Cam_RotateToggle = m_Cam.FindAction("RotateToggle", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -241,17 +241,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Cam;
     private ICamActions m_CamActionsCallbackInterface;
     private readonly InputAction m_Cam_Move;
-    private readonly InputAction m_Cam_RotateToggle;
-    private readonly InputAction m_Cam_Rotate;
     private readonly InputAction m_Cam_Zoom;
+    private readonly InputAction m_Cam_Rotation;
+    private readonly InputAction m_Cam_RotateToggle;
     public struct CamActions
     {
         private @PlayerControls m_Wrapper;
         public CamActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Cam_Move;
-        public InputAction @RotateToggle => m_Wrapper.m_Cam_RotateToggle;
-        public InputAction @Rotate => m_Wrapper.m_Cam_Rotate;
         public InputAction @Zoom => m_Wrapper.m_Cam_Zoom;
+        public InputAction @Rotation => m_Wrapper.m_Cam_Rotation;
+        public InputAction @RotateToggle => m_Wrapper.m_Cam_RotateToggle;
         public InputActionMap Get() { return m_Wrapper.m_Cam; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -264,15 +264,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_CamActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_CamActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_CamActionsCallbackInterface.OnMove;
-                @RotateToggle.started -= m_Wrapper.m_CamActionsCallbackInterface.OnRotateToggle;
-                @RotateToggle.performed -= m_Wrapper.m_CamActionsCallbackInterface.OnRotateToggle;
-                @RotateToggle.canceled -= m_Wrapper.m_CamActionsCallbackInterface.OnRotateToggle;
-                @Rotate.started -= m_Wrapper.m_CamActionsCallbackInterface.OnRotate;
-                @Rotate.performed -= m_Wrapper.m_CamActionsCallbackInterface.OnRotate;
-                @Rotate.canceled -= m_Wrapper.m_CamActionsCallbackInterface.OnRotate;
                 @Zoom.started -= m_Wrapper.m_CamActionsCallbackInterface.OnZoom;
                 @Zoom.performed -= m_Wrapper.m_CamActionsCallbackInterface.OnZoom;
                 @Zoom.canceled -= m_Wrapper.m_CamActionsCallbackInterface.OnZoom;
+                @Rotation.started -= m_Wrapper.m_CamActionsCallbackInterface.OnRotation;
+                @Rotation.performed -= m_Wrapper.m_CamActionsCallbackInterface.OnRotation;
+                @Rotation.canceled -= m_Wrapper.m_CamActionsCallbackInterface.OnRotation;
+                @RotateToggle.started -= m_Wrapper.m_CamActionsCallbackInterface.OnRotateToggle;
+                @RotateToggle.performed -= m_Wrapper.m_CamActionsCallbackInterface.OnRotateToggle;
+                @RotateToggle.canceled -= m_Wrapper.m_CamActionsCallbackInterface.OnRotateToggle;
             }
             m_Wrapper.m_CamActionsCallbackInterface = instance;
             if (instance != null)
@@ -280,15 +280,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
-                @RotateToggle.started += instance.OnRotateToggle;
-                @RotateToggle.performed += instance.OnRotateToggle;
-                @RotateToggle.canceled += instance.OnRotateToggle;
-                @Rotate.started += instance.OnRotate;
-                @Rotate.performed += instance.OnRotate;
-                @Rotate.canceled += instance.OnRotate;
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @Rotation.started += instance.OnRotation;
+                @Rotation.performed += instance.OnRotation;
+                @Rotation.canceled += instance.OnRotation;
+                @RotateToggle.started += instance.OnRotateToggle;
+                @RotateToggle.performed += instance.OnRotateToggle;
+                @RotateToggle.canceled += instance.OnRotateToggle;
             }
         }
     }
@@ -305,8 +305,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     public interface ICamActions
     {
         void OnMove(InputAction.CallbackContext context);
-        void OnRotateToggle(InputAction.CallbackContext context);
-        void OnRotate(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
+        void OnRotation(InputAction.CallbackContext context);
+        void OnRotateToggle(InputAction.CallbackContext context);
     }
 }

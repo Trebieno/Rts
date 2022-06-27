@@ -15,28 +15,28 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "RotateToggle",
-                    "type": "Button",
-                    "id": "cdcaf264-15e2-484e-bdc7-2560f7f80522",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Rotate",
-                    "type": "PassThrough",
-                    "id": "502b387c-e96f-4198-ad68-6fc7c0907dd0",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Zoom",
                     "type": "PassThrough",
                     "id": "eddf3005-d812-458e-989b-ccfd1713a385",
                     "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Rotation",
+                    "type": "Value",
+                    "id": "aaae066e-3b8a-4543-bde8-05d1addd58be",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RotateToggle",
+                    "type": "Button",
+                    "id": "4a45ad74-7ab3-4639-aac9-c4f0e8b0235a",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -100,34 +100,34 @@
                 },
                 {
                     "name": "",
-                    "id": "56b34ef1-1388-430a-9666-4d09850844f5",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard & Mouse",
-                    "action": "RotateToggle",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "807a878d-6d63-4fe7-9ea2-63e0db165a97",
-                    "path": "<Mouse>/delta/x",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard & Mouse",
-                    "action": "Rotate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "4acfb7ca-d043-4853-9929-14eeec69e34b",
                     "path": "<Mouse>/scroll/y",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
                     "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c485b93e-6d37-4f8a-b282-e3dbb8916633",
+                    "path": "<Mouse>/delta/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a41216cb-b9a9-4739-8f46-94460eb3c04b",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

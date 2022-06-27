@@ -4,56 +4,65 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    PlayerControls controls;
+    private PlayerControls _controls;
 
-    [SerializeField] private float rotationSens = 0.6f;
-    [SerializeField] private float moveSpeed = 0.3f;
-    [SerializeField] private float zoomSens = 0.01f;
-    [SerializeField] private float zoomSmooth = 0.3f;
+    [SerializeField] private float _rotationSens = 0.6f;
+    [SerializeField] private float _moveSpeed = 0.3f;
+    [SerializeField] private float _zoomSens = 0.01f;
+    [SerializeField] private float _zoomSmooth = 0.3f;
     [SerializeField] private float minZoom = 1f;
-    [SerializeField] private float maxZoom = 10f;
-    [SerializeField] AnimationCurve zoomCurve;
-    private Vector2 moveInput;
-    private float rotationAxis;
-    private bool rotate;
-    private float zoom;
-    private float dist;
+    [SerializeField] private float _maxZoom = 10f;
+    [SerializeField] AnimationCurve _zoomCurve;
+
+    private Vector2 _moveInput;
+    private float _rotationAxis;
+    private bool _rotate;
+    private float _zoom;
+    private float _dist;
 
     Transform cam;
 
     private void Awake()
     {
-        controls = new PlayerControls();
-        controls.Enable();
+        _controls = new PlayerControls();
+        _controls.Enable();
         cam = Camera.main.transform;
-        dist = Vector3.Distance(cam.position, transform.position);
+        _dist = Vector3.Distance(cam.position, transform.position);
     }
 
-    void Update()
+    private void Update()
     {
         Inputs();
 
-        if (rotate)
+        if(Input.GetKey(KeyCode.E))
+            transform.Rotate(0, _rotationSens * Time.deltaTime, 0);
+
+
+        if(Input.GetKey(KeyCode.Q))
+            transform.Rotate(0, -_rotationSens * Time.deltaTime, 0);
+        
+        if (_rotate)
         {
-            transform.eulerAngles += new Vector3(0, rotationAxis, 0);
+            transform.eulerAngles += new Vector3(0, _rotationAxis / 50, 0);
         }
 
-        transform.position += moveInput.y * transform.forward + moveInput.x * transform.right;
+        transform.position += _moveInput.y * transform.forward + _moveInput.x * transform.right;
 
-        cam.LookAt(transform);
-        dist -= zoom * zoomSens;
-        dist = Mathf.Clamp(dist, minZoom, maxZoom);
-        float y = (zoomCurve.Evaluate(dist / (maxZoom - minZoom)) * (maxZoom - minZoom)) + minZoom;
-        Vector3 target = (dist * (cam.position - transform.position).normalized) + transform.position;
+        //cam.LookAt(transform);
+        _dist -= _zoom * _zoomSens;
+        _dist = Mathf.Clamp(_dist, minZoom, _maxZoom);
+        float y = (_zoomCurve.Evaluate(_dist / (_maxZoom - minZoom)) * (_maxZoom - minZoom)) + minZoom;
+        Vector3 target = (_dist * (cam.position - transform.position).normalized) + transform.position;
         target.y = y;
-        cam.position = Vector3.Lerp(cam.position, target, zoomSmooth * Time.deltaTime);
+        cam.position = Vector3.Lerp(cam.position, target, _zoomSmooth);
     }
 
-    void Inputs()
+    private void Inputs()
     {
-        moveInput = controls.Cam.Move.ReadValue<Vector2>() * moveSpeed;
-        rotationAxis = controls.Cam.Rotate.ReadValue<float>() * rotationSens;
-        rotate = controls.Cam.RotateToggle.inProgress;
-        zoom = controls.Cam.Zoom.ReadValue<float>();
+        _moveInput = _controls.Cam.Move.ReadValue<Vector2>() * _moveSpeed;
+        _zoom = _controls.Cam.Zoom.ReadValue<float>();
+        _rotationAxis = _controls.Cam.Rotation.ReadValue<float>() * _rotationSens;
+        _rotate = _controls.Cam.RotateToggle.inProgress;
+        
     }
 }

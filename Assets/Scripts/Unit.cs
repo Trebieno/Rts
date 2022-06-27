@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
 public class Unit : MonoBehaviour, IHealth
 {
     [SerializeField] private GameObject _selectedSprite;
     [SerializeField] private NavMeshAgent _agent;
-    [SerializeField] private bool _isSelected = false;
-    private bool previousIsSelected = false;
-    [SerializeField] private bool _isMoving = false;
     [SerializeField] private List<Unit> _squad;
     [SerializeField] private float _curHealth = 20;
     [SerializeField] private float _maxHealth = 20;
@@ -17,8 +16,16 @@ public class Unit : MonoBehaviour, IHealth
 
     private Vector3 _target = Vector3.zero;
     private Unit unit;
+    private Animator animator;
+    private string curAnimation;
+    private bool previousIsSelected = false;
+    private bool _isSelected = false;
+    private bool _isMoving = false;
+    
+
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         unit = GetComponent<Unit>();
         _squad.Add(unit); 
         _agent = GetComponent<NavMeshAgent>();        
@@ -27,10 +34,17 @@ public class Unit : MonoBehaviour, IHealth
     }
 
     private void Update()
-    {                               
+    {   
         if (_isMoving)
         {
             _agent.SetDestination(_target);
+        }
+
+        if (Vector3.Distance(transform.position, _target) <= 0.5f && _isMoving)
+        {
+            SetMoving(false);
+            animator.SetBool("Run", false);
+            Debug.Log("Дошёл");
         }
     }
 
@@ -38,6 +52,8 @@ public class Unit : MonoBehaviour, IHealth
     {
         SetMoving(true);
         _target = point;
+        animator.SetBool("Run", true);
+        animator.SetBool("Changing", false);
     }
 
     public void SquadSelect(bool isSelected)
@@ -54,9 +70,10 @@ public class Unit : MonoBehaviour, IHealth
         previousIsSelected = isSelected;
     }
     
+
     public void Attack()
     {
-
+        
     }
 
     public List<Unit> AllSquadMembers()
@@ -66,13 +83,12 @@ public class Unit : MonoBehaviour, IHealth
 
     public void SetSelect(bool isSelected)
     {
-        this._isSelected = isSelected;
-
+        _isSelected = isSelected;
     }
 
     public void SetMoving(bool isMoving)
     {
-        this._isMoving = isMoving;
+        _isMoving = isMoving;
     }
 
     public void SetSprite(bool active)

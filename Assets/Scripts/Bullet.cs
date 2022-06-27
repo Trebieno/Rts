@@ -1,47 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private LayerMask _mask;
+    [SerializeField] private float _damage;
     [SerializeField] private float _timeDestroy;
-    private float _damage;
+    
 
-    private void Start()
+    private Unit _unit;
+    private Enemy _enemy;
+    private void Start() 
     {
-        StartCoroutine(DestroyBullet());
+        Destroy(gameObject, _timeDestroy);
     }
-
-
-    private void Update()
+    
+    private void OnTriggerEnter(Collider other) 
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.up, out hit, 0.22f, _mask))
+        if (_unit && other.GetComponent<Unit>())
+            return; 
+
+        if (other.transform.GetComponent<IHealth>() != null)
         {
-            if (hit.transform.GetComponent<IHealth>() != null)
-            {
-                //Debug.Log("Попал в " + hit.transform.name);
-                var health = hit.transform.GetComponent<IHealth>();
-                health.TakeDamage(_damage);
-                Destroy(gameObject);
-            }
+            IHealth health = other.transform.GetComponent<IHealth>();
+            health.TakeDamage(_damage);
+            Destroy(gameObject);
+
         }
     }
 
-    public void SetDamageBullet(float damage)
+    public void Set(float damage, float timeDestroy, Unit unit = null)
     {
         _damage = damage;
-    }
-
-    public void SetTimeDestroy(float timeDestroy)
-    {
         _timeDestroy = timeDestroy;
-    }
-
-    public IEnumerator DestroyBullet()
-    {
-        yield return new WaitForSeconds(_timeDestroy);
-        Destroy(gameObject);
+        _unit = unit;
     }
 }
+

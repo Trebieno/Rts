@@ -31,7 +31,7 @@ public class WaveSystem : MonoBehaviour
         _enemyCount = _waveNumber * 10;
         StartWave();
         SpawnEnemy spawn = _spawns[0].GetComponent<SpawnEnemy>();
-        spawn.NpcLvlUp();
+        //spawn.NpcLvlUp();
     }
 
     public void StopWave()

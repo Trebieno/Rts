@@ -1,66 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour, IHealth
+public class Enemy : Weapon, IHealth
 {
     private enum Type
     {
-        warrior,
+        Warrior,
         Archer,
     };
-    [SerializeField] private Type typeEnemy = Type.warrior;
+    [SerializeField] private Type typeEnemy = Type.Warrior;
     [SerializeField] private float _maxHealth = 100;
     [SerializeField] private float _curHealth = 100;
     [SerializeField] private float _moveSpeed;
-    [SerializeField] private float _damage;
-    [SerializeField] private Transform _target;
-    [SerializeField] private Transform _damagePoint;
-    [SerializeField] private LayerMask _unitsMask;
     private NavMeshAgent _agent;
-    private EnemyShooting enemyShooting;
 
     private void Awake()
     {
-        enemyShooting = GetComponent<EnemyShooting>();
         _agent = GetComponent<NavMeshAgent>();
         _agent.speed = _moveSpeed;
-        StartCoroutine(Hiting());
-    }
-
-    
-    private void Update()
-    {
-        if(_target != null)
+        _isCloseCombat = true;
+        _isRadius = false;
+        if (typeEnemy == Type.Archer)
         {
-            Move(_target.position);
-
-            switch(typeEnemy)
-            {
-            case Type.Archer:
-                ArcherAttack();
-                break;
-            case Type.warrior:
-                WarriorAttack();
-                break;
-            }
-
+            _isCloseCombat = false;
+            _isRadius = true;
         }
-        
-        if(_target == null)
-            SearhUnit();
-
     }
 
-    private int hit = 0;
-    private IEnumerator Hiting()
+    private void FixedUpdate() 
     {
-        yield return new WaitForSeconds(0.3f);
-        hit++;
+        if(SearchEnemy(gameObject).Count > 0 && Vector3.Distance(SearchEnemy(gameObject)[0].transform.position, transform.position) > _radius)
+            _agent.SetDestination(SearchEnemy(gameObject)[0].transform.position);
+        
 
-        StartCoroutine(Hiting());
+        else if (SearchEnemy(gameObject).Count > 0 && Vector3.Distance(SearchEnemy(gameObject)[0].transform.position, transform.position) < _radius)
+            _target = SearchEnemy(gameObject)[0].transform;
+
+        
+        if(_target != null)
+            _agent.SetDestination(transform.position);
     }
 
     public void TakeDamage(float damage)
@@ -73,42 +51,9 @@ public class Enemy : MonoBehaviour, IHealth
         Debug.Log(_curHealth +"  "+ gameObject.name);
     }
 
-    private void SearhUnit()
+    protected override void RotatinonObjectOrMove()
     {
-        List<GameObject> _units = GameObject.FindGameObjectsWithTag("Unit").ToList();
-        if(_target == null && _units.Count > 0)
-        {
-            _target = _units[Random.Range(0, _units.Count - 1)].transform;
-        }
-    }
-
-    private void WarriorAttack()
-    {
-        Debug.DrawRay(_damagePoint.position, _damagePoint.forward, Color.red, 0.02f);
-        RaycastHit hit;
-        if (Physics.Raycast(_damagePoint.position, _damagePoint.forward, out hit, 0.02f,_unitsMask))
-        {            
-            if (hit.transform.GetComponent<IHealth>() != null)
-            {
-                IHealth health = hit.transform.GetComponent<IHealth>();
-                if (this.hit >= 1)
-                {
-                    health.TakeDamage(_damage);
-                    this.hit = 0;
-                }
-            }
-        }
-    }
-
-    private void ArcherAttack()
-    {
-        enemyShooting.SetDamage(_damage);
-        enemyShooting.SetTarget(_target);        
-    }
-
-    public void Move(Vector3 target)
-    {
-        _agent.SetDestination(_target.position);
+        
     }
 
     public void LvlUp()
