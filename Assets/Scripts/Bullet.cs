@@ -1,37 +1,31 @@
 using UnityEngine;
 
+
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float _damage;
     [SerializeField] private float _timeDestroy;
-    
 
-    private Unit _unit;
-    private Enemy _enemy;
-    private void Start() 
-    {
-        Destroy(gameObject, _timeDestroy);
-    }
+    private Commands _command;
+    
+    private void Start() => Destroy(gameObject, _timeDestroy);
     
     private void OnTriggerEnter(Collider other) 
     {
-        if (_unit && other.GetComponent<Unit>())
-            return; 
+        if(_command == other.GetComponent<Character>().Command) 
+            return;
 
-        if (other.transform.GetComponent<IHealth>() != null)
-        {
-            IHealth health = other.transform.GetComponent<IHealth>();
+        if (other.TryGetComponent(out IHealth health)) 
             health.TakeDamage(_damage);
-            Destroy(gameObject);
 
-        }
+        Destroy(gameObject);
     }
 
-    public void Set(float damage, float timeDestroy, Unit unit = null)
+    public void SetSettings(float damage, float timeDestroy, Commands command)
     {
         _damage = damage;
         _timeDestroy = timeDestroy;
-        _unit = unit;
+        _command = command;
     }
 }
 

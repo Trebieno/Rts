@@ -36,13 +36,4 @@ public class SpawnEnemy : MonoBehaviour
     {
         _waveSystem = waveSystem;
     }
-
-    public void NpcLvlUp()
-    {
-        _timeSpawn -= 0.04f;
-        for (int i = 0; i < _npcs.Count; i++)
-        {
-            _npcs[i].GetComponent<Enemy>().LvlUp();
-        }
-    }
 }

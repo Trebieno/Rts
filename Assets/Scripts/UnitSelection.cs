@@ -65,11 +65,11 @@ public class UnitSelection : MonoBehaviour
                     List<Vector3> targetPositionList = GetPositionListAround(hit.point, new float[] { 2f, 2*2, 2*3}, new int[] {5, 10, 20});
 
                     int targetPositionListIndex = 0;
-                    foreach (Unit unit in units.FindAll(i => i.IsSelected()))
+                    foreach (Unit unit in units.FindAll(i => i.IsSelected))
                     {
                         targetForUnits.transform.position = new Vector3(hit.point.x, hit.point.y + 0.2f, hit.point.z);
                         targetForUnits.SetActive(true);
-                        unit.MoveTo(targetPositionList[targetPositionListIndex]);
+                        //unit.Movements.SetTarget(targetPositionList[targetPositionListIndex]);
                         targetPositionListIndex = (targetPositionListIndex + 1) % targetPositionList.Count;
                     }
                 }
@@ -77,7 +77,7 @@ public class UnitSelection : MonoBehaviour
                 else if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _enemyMask))
                 {
                     var unit = hit.collider.GetComponent<Unit>();
-                    unit.Attack();
+                    //unit.Attacker. ();
                 }
         }
         

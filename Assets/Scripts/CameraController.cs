@@ -12,22 +12,21 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _zoomSmooth = 0.3f;
     [SerializeField] private float minZoom = 1f;
     [SerializeField] private float _maxZoom = 10f;
-    [SerializeField] AnimationCurve _zoomCurve;
+    [SerializeField] private AnimationCurve _zoomCurve;
 
     private Vector2 _moveInput;
     private float _rotationAxis;
     private bool _rotate;
     private float _zoom;
     private float _dist;
-
-    Transform cam;
+    private Transform _cam;
 
     private void Awake()
     {
         _controls = new PlayerControls();
         _controls.Enable();
-        cam = Camera.main.transform;
-        _dist = Vector3.Distance(cam.position, transform.position);
+        _cam = Camera.main.transform;
+        _dist = Vector3.Distance(_cam.position, transform.position);
     }
 
     private void Update()
@@ -52,9 +51,9 @@ public class CameraController : MonoBehaviour
         _dist -= _zoom * _zoomSens;
         _dist = Mathf.Clamp(_dist, minZoom, _maxZoom);
         float y = (_zoomCurve.Evaluate(_dist / (_maxZoom - minZoom)) * (_maxZoom - minZoom)) + minZoom;
-        Vector3 target = (_dist * (cam.position - transform.position).normalized) + transform.position;
+        Vector3 target = (_dist * (_cam.position - transform.position).normalized) + transform.position;
         target.y = y;
-        cam.position = Vector3.Lerp(cam.position, target, _zoomSmooth);
+        _cam.position = Vector3.Lerp(_cam.position, target, _zoomSmooth);
     }
 
     private void Inputs()
