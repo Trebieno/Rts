@@ -6,15 +6,16 @@ public class Unit : Character
 {  
     
     [SerializeField] private List<Unit> _squad;
-    private GameObject _selectedSprite;
+    [SerializeField] private Transform _selectedSprite;
     private bool previousIsSelected = false;
     private bool _isSelected = false;
 
     private void Awake()
     {
+        UnitSelection.Units.Add(this);
         _squad.Add(this);
-        UnitSelection.units.Add(this);
         Command = Commands.unit;
+        _selectedSprite = transform.Find("Select");
     }
 
     public List<Unit> AllSquadMembers() => _squad;
@@ -23,7 +24,7 @@ public class Unit : Character
 
     public void SetSelect(bool selected) => _isSelected = selected;
 
-    public void SetActiveSprite(bool active) => _selectedSprite.SetActive(active);
+    public void SetActiveSprite(bool active) => _selectedSprite.gameObject.SetActive(active);
 
     public void SquadSelect(bool isSelected)
     {

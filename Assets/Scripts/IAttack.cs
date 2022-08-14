@@ -1,6 +1,6 @@
 
 public interface IAttack
 {
-    public void DualDamage(IAttackeble attackeble);
+    public void DealDamage(IAttackeble attackeble);
 }
     

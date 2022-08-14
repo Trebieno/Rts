@@ -6,75 +6,47 @@ using UnityEngine;
 
 public enum Commands
 {
-    unit, enemy
+    unit, enemy, tower
 }
-
 [RequireComponent(typeof(Movements))]
+[RequireComponent(typeof(Attacker))]
 [RequireComponent(typeof(MeleeAttack))]
 [RequireComponent(typeof(RangeAttack))]
+[RequireComponent(typeof(AnimationHandler))]
 public class Character : MonoBehaviour, IAttackeble
 {
-    [HideInInspector] public Movements Movements;
+    public Movements Movements;
+    public NpcView NpcView;
     public Commands Command;
-    [SerializeField] private LayerMask _attackMask;
+    public event Action Damaged;
+    
+
+
+    protected AnimationHandler animationHandler;
+    
+    protected Attacker attacker;
+    
     [SerializeField] protected float maxHealth;
     [SerializeField] protected float curHealth;
     [SerializeField] protected float moveSpeed;
 
-    
-    [SerializeField] private float _radius;
-    [SerializeField] private bool _isRadius;
-    [SerializeField] private bool _isMelleeAttack;
-    [SerializeField] private bool _isRangeAttack;
-    [SerializeField] private bool _isControlling;
-
-    private NpcView _npcView;
+    [SerializeField] protected bool isControlling;
     private IAttack _attack;
-    private MeleeAttack _meleeAttack;
-    private RangeAttack _rangeAttack;
-    
-    protected NpcView npcView;
-
-    private void Awake()
+    private void Start()
     {
-        npcView = GameObject.Find("NpcView").GetComponent<NpcView>();
-        npcView.AddList(this);
-        _meleeAttack = GetComponent<MeleeAttack>();
-        _rangeAttack = GetComponent<RangeAttack>();
-    }
-
-    private void FixedUpdate() 
-    {
-        //Movements?.SetTarget(Searching(this)[0].position);
-    }
-
-    private void Attack()
-    {
-        
-    }
-
-    public List<Transform> Searching(Character character)
-    {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, _radius, _attackMask);
-        List<Transform> _nearestObjects = new List<Transform>(hitColliders.Length);
-        _nearestObjects = _nearestObjects.Where(x => Vector3.Distance(character.transform.position, x.transform.position) < 8f).ToList();
-        _nearestObjects = _nearestObjects?.OrderBy(x => Vector3.Distance(character.transform.position, x.transform.position)).ToList();
-        return _nearestObjects;
+        Movements = GetComponent<Movements>();
+        animationHandler = GetComponent<AnimationHandler>();
+        attacker = GetComponent<Attacker>();
+        NpcView = GameObject.Find("NpcView").GetComponent<NpcView>();
+        NpcView.AddList(this);
     }
 
     public void SetDamage(float damage)
     {
+        Damaged?.Invoke();
         curHealth -= damage;
-        if (curHealth <= 0)
-            Destroy(gameObject);
+        if (curHealth <= 0) Destroy(gameObject);
 
-        Debug.Log(curHealth +" "+ gameObject.name);
-    }
-
-    public void OnDrawGizmos() 
-    {
-        if(!_isRadius) return;
-        Gizmos.color = Color.red;        
-        Gizmos.DrawWireSphere(transform.position, _radius);
-    }
+        Debug.Log(gameObject.name +" : "+ curHealth);
+    }    
 }

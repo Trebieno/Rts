@@ -4,40 +4,39 @@ using UnityEngine;
 
 public class UnitSelection : MonoBehaviour
 {
-    public static List<Unit> units = new List<Unit>();
-    public static bool canDrag = true;
+    public static List<Unit> Units = new List<Unit>();
+    public static bool СanDrag = true;
+    
     [SerializeField] private LayerMask _clickableMask;
     [SerializeField] private LayerMask _groundMask;
     [SerializeField] private LayerMask _enemyMask;
-    [SerializeField] private GameObject selectArea;
-    [SerializeField] private GameObject targetForUnits;
+    [SerializeField] private GameObject _selectArea;
+    [SerializeField] private GameObject _targetForUnits;
 
-    public bool drag = false;
-    private Vector3 previousMousePos;
-    private Camera cam;
-    private Vector3 dragStartPos;
-    private Rect selectionRect;
+    private bool _drag = false;
+    private Vector3 _previousMousePos;
+    private Camera _cam;
+    private Vector3 _dragStartPos;
+    private Rect _selectionRect;
 
     
 
     private void Awake()
     {
-        cam = Camera.main;
+        _cam = Camera.main;
     }
 
     private void Update()
     {
-        if (Input.mousePosition != previousMousePos &&
-            Input.GetMouseButton(0) && 
-            !drag)
+        if (Input.mousePosition != _previousMousePos && Input.GetMouseButton(0) && !_drag)
         {
             SetDrag(true);
         }
-        previousMousePos = Input.mousePosition;
+        _previousMousePos = Input.mousePosition;
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (drag)
+            if (_drag)
             {
                 SetDrag(false);
             }
@@ -46,92 +45,85 @@ public class UnitSelection : MonoBehaviour
         if(Input.GetMouseButtonUp(1))
         {
             RaycastHit hit;
-                if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _clickableMask))
+            if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _clickableMask))
+            {
+                var unit = hit.collider.GetComponent<Unit>();
+                if (!Input.GetKey(KeyCode.LeftShift))
                 {
-                    var unit = hit.collider.GetComponent<Unit>();
-                    if (!Input.GetKey(KeyCode.LeftShift))
-                    {
-                        ClearSelection();
-                        targetForUnits.SetActive(false);
-                    }
-                    if (unit != null)
-                    {
-                        unit.SquadSelect(true);
-                    }
+                    ClearSelection();
+                    _targetForUnits.SetActive(false);
+                }
+                if (unit != null)
+                {
+                    unit.SquadSelect(true);    
+                } 
+            }
+
+            else if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _groundMask))
+            {
+                List<Vector3> targetPositionList = GetPositionListAround(hit.point, new float[] { 2f, 2*2, 2*3}, new int[] {5, 10, 20});
+
+                int targetPositionListIndex = 0;
+                foreach (Unit unit in Units.FindAll(i => i.IsSelected))
+                {
+                    _targetForUnits.transform.position = new Vector3(hit.point.x, hit.point.y + 0.2f, hit.point.z);
+                    _targetForUnits.SetActive(true);
+                    unit.Movements.SetTarget(targetPositionList[targetPositionListIndex]);
+                    targetPositionListIndex = (targetPositionListIndex + 1) % targetPositionList.Count;
                     
                 }
-                else if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _groundMask))
-                {
-                    List<Vector3> targetPositionList = GetPositionListAround(hit.point, new float[] { 2f, 2*2, 2*3}, new int[] {5, 10, 20});
+            }
 
-                    int targetPositionListIndex = 0;
-                    foreach (Unit unit in units.FindAll(i => i.IsSelected))
-                    {
-                        targetForUnits.transform.position = new Vector3(hit.point.x, hit.point.y + 0.2f, hit.point.z);
-                        targetForUnits.SetActive(true);
-                        //unit.Movements.SetTarget(targetPositionList[targetPositionListIndex]);
-                        targetPositionListIndex = (targetPositionListIndex + 1) % targetPositionList.Count;
-                    }
-                }
-
-                else if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _enemyMask))
-                {
-                    var unit = hit.collider.GetComponent<Unit>();
-                    //unit.Attacker. ();
-                }
+            else if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, _enemyMask))
+            {
+                var unit = hit.collider.GetComponent<Unit>();
+                //unit.Attacker. ();
+            }
         }
         
-        if (drag)
+        if (_drag)
         {
-            targetForUnits.SetActive(false);
-            RectTransform area = selectArea.GetComponent<RectTransform>();
+            _targetForUnits.SetActive(false);
+            RectTransform area = _selectArea.GetComponent<RectTransform>();
             DrawSelectArea(area);
             CalculateSelectionRect();
 
-            units.RemoveAll(x => x == null);
-            foreach (Unit unit in units)
+            Units.RemoveAll(x => x == null);
+            foreach (Unit unit in Units)
             {
-                unit.SquadSelect(selectionRect.Contains(cam.WorldToScreenPoint(unit.transform.position)));
+                unit.SquadSelect(_selectionRect.Contains(_cam.WorldToScreenPoint(unit.transform.position)));
             }
         }
     }
 
     private void DrawSelectArea(RectTransform trans)
     {
-        Vector3 selectCenter = (Input.mousePosition + dragStartPos) / 2;
+        Vector3 selectCenter = (Input.mousePosition + _dragStartPos) / 2;
         trans.position = selectCenter;
 
-        Vector3 deltaPos = Input.mousePosition - dragStartPos;
+        Vector3 deltaPos = Input.mousePosition - _dragStartPos;
         Vector2 size = new Vector2(Mathf.Abs(deltaPos.x), Mathf.Abs(deltaPos.y));
         trans.sizeDelta = size;
     }
 
     private void CalculateSelectionRect()
     {
-        selectionRect.xMin = dragStartPos.x > Input.mousePosition.x ? Input.mousePosition.x : dragStartPos.x;
-        selectionRect.xMax = dragStartPos.x < Input.mousePosition.x ? Input.mousePosition.x : dragStartPos.x;
-        selectionRect.yMin = dragStartPos.y > Input.mousePosition.y ? Input.mousePosition.y : dragStartPos.y;
-        selectionRect.yMax = dragStartPos.y < Input.mousePosition.y ? Input.mousePosition.y : dragStartPos.y;
+        _selectionRect.xMin = _dragStartPos.x > Input.mousePosition.x ? Input.mousePosition.x : _dragStartPos.x;
+        _selectionRect.xMax = _dragStartPos.x < Input.mousePosition.x ? Input.mousePosition.x : _dragStartPos.x;
+        _selectionRect.yMin = _dragStartPos.y > Input.mousePosition.y ? Input.mousePosition.y : _dragStartPos.y;
+        _selectionRect.yMax = _dragStartPos.y < Input.mousePosition.y ? Input.mousePosition.y : _dragStartPos.y;
     }
 
     private void SetDrag(bool _drag)
     {
-        if (canDrag)
+        if (СanDrag)
         {
             if (_drag)
             {
-                dragStartPos = Input.mousePosition;
+                _dragStartPos = Input.mousePosition;
             }
-            drag = _drag;
-            selectArea.SetActive(_drag);
-        }
-    }
-
-    public static void ClearSelection()
-    {
-        foreach (Unit unit in units)
-        {
-            unit.SetSelect(false);
+            this._drag = _drag;
+            _selectArea.SetActive(_drag);
         }
     }
 
@@ -163,6 +155,14 @@ public class UnitSelection : MonoBehaviour
     private Vector3 ApplyRotationToVector(Vector3 vec, float angle)
     {
         return Quaternion.Euler(0, 0, angle) * vec;
+    }
+
+    public static void ClearSelection()
+    {
+        foreach (Unit unit in Units)
+        {
+            unit.SetSelect(false);
+        }
     }
 
 }

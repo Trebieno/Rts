@@ -52,7 +52,7 @@ public class BuildButton : MonoBehaviour, IPointerDownHandler
                 Vector3 pos = _newHologram.transform.position;
                 Destroy(_newHologram);
                 Instantiate(_building, pos, Quaternion.identity);
-                UnitSelection.canDrag = true;
+                UnitSelection.СanDrag = true;
             }
         }
 
@@ -60,7 +60,7 @@ public class BuildButton : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        UnitSelection.canDrag = false;
+        UnitSelection.СanDrag = false;
         _isPlanning = true;
     }
 }

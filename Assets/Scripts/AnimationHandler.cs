@@ -1,18 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class AnimationHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Character _character;
+    private Animator _animator;
+
+    private void Start()
     {
-        
+        _animator = GetComponent<Animator>();
+        _character = GetComponent<Character>();
+
+        if(_character.Movements == null) 
+            Debug.Log(null);
+
+        _character.Movements.Moved += CharacterOnMoved;
+        _character.Damaged += CharacterOnDamaged;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy() 
     {
-        
+        _character.Damaged -= CharacterOnDamaged;
+        _animator.SetTrigger("Death");
+    }
+
+    private void CharacterOnDamaged()
+    {
+        _animator.SetTrigger("TakeDamage");
+    }
+
+    private void CharacterOnMoved()
+    {
+        _animator.SetBool("Run", true);
+    }
+
+    private void FixedUpdate() 
+    {
+        if(_character.Movements.GetStop())
+        {
+            _animator.SetBool("Run", false);
+        }
     }
 }
