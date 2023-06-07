@@ -8,8 +8,12 @@ using UnityEngine.AI;
 public class Movements : MonoBehaviour
 {
     private NavMeshAgent _agent;
-    public event Action Moved;
     private Vector3 _target;
+
+    public event Action Moved;
+    
+    public NavMeshAgent Agent => _agent;
+
 
     private void Awake() => _agent = GetComponent<NavMeshAgent>();
 
@@ -21,6 +25,4 @@ public class Movements : MonoBehaviour
         _target = target;
         Moved?.Invoke();
     }
-
-    public bool GetStop() => ((Vector3.Distance(transform.position, _target) > 0.4f) ? false : true);
 }

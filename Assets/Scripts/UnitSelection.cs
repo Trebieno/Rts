@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class UnitSelection : MonoBehaviour
 {
-    public static List<Unit> Units = new List<Unit>();
+    public static UnitSelection Instance {get; set;}
+
     public static bool СanDrag = true;
     
     [SerializeField] private LayerMask _clickableMask;
@@ -12,6 +13,7 @@ public class UnitSelection : MonoBehaviour
     [SerializeField] private LayerMask _enemyMask;
     [SerializeField] private GameObject _selectArea;
     [SerializeField] private GameObject _targetForUnits;
+    [SerializeField] private NpcView _npcView;
 
     private bool _drag = false;
     private Vector3 _previousMousePos;
@@ -19,10 +21,19 @@ public class UnitSelection : MonoBehaviour
     private Vector3 _dragStartPos;
     private Rect _selectionRect;
 
-    
+    public NpcView NpcView => _npcView;
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         _cam = Camera.main;
     }
 
@@ -55,7 +66,7 @@ public class UnitSelection : MonoBehaviour
                 }
                 if (unit != null)
                 {
-                    unit.SquadSelect(true);    
+                    unit.Select(true);    
                 } 
             }
 
@@ -64,7 +75,7 @@ public class UnitSelection : MonoBehaviour
                 List<Vector3> targetPositionList = GetPositionListAround(hit.point, new float[] { 2f, 2*2, 2*3}, new int[] {5, 10, 20});
 
                 int targetPositionListIndex = 0;
-                foreach (Unit unit in Units.FindAll(i => i.IsSelected))
+                foreach (Unit unit in NpcView.Units.FindAll(i => i.IsSelected))
                 {
                     _targetForUnits.transform.position = new Vector3(hit.point.x, hit.point.y + 0.2f, hit.point.z);
                     _targetForUnits.SetActive(true);
@@ -88,10 +99,10 @@ public class UnitSelection : MonoBehaviour
             DrawSelectArea(area);
             CalculateSelectionRect();
 
-            Units.RemoveAll(x => x == null);
-            foreach (Unit unit in Units)
+            NpcView.Units.RemoveAll(x => x == null);
+            foreach (Unit unit in NpcView.Units)
             {
-                unit.SquadSelect(_selectionRect.Contains(_cam.WorldToScreenPoint(unit.transform.position)));
+                unit.Select(_selectionRect.Contains(_cam.WorldToScreenPoint(unit.transform.position)));
             }
         }
     }
@@ -157,11 +168,11 @@ public class UnitSelection : MonoBehaviour
         return Quaternion.Euler(0, 0, angle) * vec;
     }
 
-    public static void ClearSelection()
+    public void ClearSelection()
     {
-        foreach (Unit unit in Units)
+        foreach (Unit unit in NpcView.Units)
         {
-            unit.SetSelect(false);
+            unit.Select(false);
         }
     }
 

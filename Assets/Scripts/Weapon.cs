@@ -31,7 +31,7 @@ public abstract class Weapon : MonoBehaviour
         if (_curBullets > 0 && _hit > 0)
         {
             Bullet bullet = Instantiate(_bulletPrefab, _firePoint.transform.position, _firePoint.rotation);
-            bullet.SetSettings(_damage, _bulletTimeDestroy, _character.Command);
+            bullet.SetSettings(_damage, _bulletTimeDestroy, _character.Team);
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
             rb.AddForce(-bullet.transform.right * _bulletForce, ForceMode.Impulse);

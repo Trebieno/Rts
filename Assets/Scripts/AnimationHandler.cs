@@ -38,7 +38,7 @@ public class AnimationHandler : MonoBehaviour
 
     private void FixedUpdate() 
     {
-        if(_character.Movements.GetStop())
+        if(!_character.Movements.Agent.hasPath)
         {
             _animator.SetBool("Run", false);
         }

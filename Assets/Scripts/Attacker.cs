@@ -29,9 +29,9 @@ public class Attacker : MonoBehaviour, IAttack
 
     private void FixedUpdate()
     {
-        Character enemy = _character.NpcView.SearchingNearest(_character, _radius);
-        if (enemy != null)
-            _attack.DealDamage(enemy);
+        // Character enemy = _character.NpcView.SearchingNearest(_character, _radius);
+        // if (enemy != null)
+        //     _attack.DealDamage(enemy);
         
     }
 
@@ -39,7 +39,7 @@ public class Attacker : MonoBehaviour, IAttack
     {
         try
         {
-            _attack.DealDamage(_character.NpcView.SearchingNearest(_character, _radius));
+            // _attack.DealDamage(_character.NpcView.SearchingNearest(_character, _radius));
         }
         catch (System.Exception)
         {

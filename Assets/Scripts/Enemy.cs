@@ -5,6 +5,6 @@ public class Enemy : Character
 {
     private void Awake()
     {
-        Command = Commands.enemy;
+        team = Team.enemy;
     }
 }

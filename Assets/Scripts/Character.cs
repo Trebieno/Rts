@@ -4,49 +4,61 @@ using System.Linq;
 using System;
 using UnityEngine;
 
-public enum Commands
+public enum Team
 {
-    unit, enemy, tower
+    unit, enemy
 }
-[RequireComponent(typeof(Movements))]
-[RequireComponent(typeof(Attacker))]
-[RequireComponent(typeof(MeleeAttack))]
-[RequireComponent(typeof(RangeAttack))]
-[RequireComponent(typeof(AnimationHandler))]
-public class Character : MonoBehaviour, IAttackeble
+
+public abstract class Character : MonoBehaviour, IAttackeble
 {
-    public Movements Movements;
-    public NpcView NpcView;
-    public Commands Command;
     public event Action Damaged;
-    
 
+    [SerializeField] protected Movements movements;
+    [SerializeField] protected Team team;
+    [SerializeField] protected AnimationHandler animationHandler;
+    [SerializeField] protected Attacker attacker;    
+    protected float maxHealth;
 
-    protected AnimationHandler animationHandler;
-    
-    protected Attacker attacker;
-    
-    [SerializeField] protected float maxHealth;
     [SerializeField] protected float curHealth;
     [SerializeField] protected float moveSpeed;
-
     [SerializeField] protected bool isControlling;
-    private IAttack _attack;
-    private void Start()
+
+
+    public Movements Movements => movements;
+    public Team Team => team;
+    public AnimationHandler AnimationHandler => animationHandler;
+    public Attacker Attacker => attacker;
+
+    private void Awake()
     {
-        Movements = GetComponent<Movements>();
-        animationHandler = GetComponent<AnimationHandler>();
-        attacker = GetComponent<Attacker>();
-        NpcView = GameObject.Find("NpcView").GetComponent<NpcView>();
-        NpcView.AddList(this);
+        maxHealth = curHealth;        
+    }
+
+    private void Start()
+    {        
+        if(movements == null)
+        {
+            movements = GetComponent<Movements>();
+            movements.Agent.speed = moveSpeed;
+        }
+
+        if(animationHandler == null)
+            animationHandler = GetComponent<AnimationHandler>();
+        
+        if(attacker == null)
+            attacker = GetComponent<Attacker>();
     }
 
     public void SetDamage(float damage)
     {
         Damaged?.Invoke();
         curHealth -= damage;
-        if (curHealth <= 0) Destroy(gameObject);
 
-        Debug.Log(gameObject.name +" : "+ curHealth);
+        if (curHealth <= 0) Die();
     }    
+
+    private void Die()
+    {
+        Destroy(this);
+    }
 }
